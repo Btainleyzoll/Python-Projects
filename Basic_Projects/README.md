@@ -1,0 +1,1 @@
+This folder will work on general tasks that are simple and easy to do and automate.

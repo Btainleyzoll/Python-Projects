@@ -33,7 +33,7 @@ while True:
             while True:
                 print("\nChoose from one of the following:\n" + 
                     "Type '1' to make another simple calculation.\n" +
-                    "Type '2' to make your own equation(Not working as of now)\n" +
+                    #"Type '2' to make your own equation(Not working as of now)\n" +
                     "Type '3' to show a list of the previous answers\n" +
                     "Type '4' to exit the calculator.")
                 rerun = input()
@@ -48,6 +48,7 @@ while True:
                     sys.exit()
                 else:
                     print("Please choose from one of the options listed.")
+                    continue
                     
     def get_numbers():
         '''
@@ -59,7 +60,7 @@ while True:
         while True:
             try: 
                 print("Please enter the first number for the calculation: ")
-                num1 = str(input())
+                num1 = str(input().lower().strip())
                 if num1.lower() == "prev":
                     num1 = prev
                 num1 = float(num1)
@@ -70,7 +71,7 @@ while True:
         while True:        
             try:   
                 print("Please enter the second number for the calculation: ")
-                num2 = str(input())
+                num2 = str(input().lower().strip())
                 if num2.lower() == "prev":
                     num2 = prev
                 num2 = float(num2)
@@ -124,9 +125,9 @@ while True:
             ans = input1 / input2
             print(f"\nAnswer: {ans:.2f}")
             return ans
-        except:
+        except ZeroDivisionError:
             print("Cannot divide by zero!")
-            sys.exit()
+            additional_calc()
             
     '''def complex_equation():
         

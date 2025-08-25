@@ -4,7 +4,8 @@ import sys
 print("Welcome to my Calculator, where you can make simple arithmetic calculations!")
 prev = 0 #initiating the variable for later use
 first_time = True  
-ans_list = []   
+ans_list = []
+equation_list = [] 
 while True:
     #Runs this if statement only during the first start to this loop so printing text will be different the rest of the loops.
     if first_time:
@@ -31,17 +32,18 @@ while True:
             '''
             while True:
                 print("\nChoose from one of the following:\n" + 
-                    "Type '1' to make another calculation.\n" +
-                    "Type '2' to show a list of the previous answers\n" +
-                    "Type '3' to make your own calculation\n" +
+                    "Type '1' to make another simple calculation.\n" +
+                    "Type '2' to make your own equation(Not working as of now)\n" +
+                    "Type '3' to show a list of the previous answers\n" +
                     "Type '4' to exit the calculator.")
-                rerun = input().lower()
-                if rerun.lower() == '1':
-                    print("Will do!")
+                rerun = input()
+                if rerun == '1':
                     break
-                elif rerun.lower() == '2':
+                #elif rerun == '2':
+                #   complex_equation()
+                elif rerun == '3':
                     view_prev_answers()
-                elif rerun.lower() == '4':
+                elif rerun == '4':
                     print("Goodbye!")
                     sys.exit()
                 else:
@@ -125,6 +127,46 @@ while True:
         except:
             print("Cannot divide by zero!")
             sys.exit()
+            
+    '''def complex_equation():
+        
+        
+        This function will allow the user to type in a equation that will be solved 
+        and it can be more complex than just a 2 number arithmetic. It will return the
+        answer after going through the whole equation. 
+        
+        
+        print("Welcome to the complex calculator.\n" +
+              "Below, write out your equation that you want solved. " +
+              "Example: 12+7-5/2*4=, and when your finished it will print the output.")
+        equation = str(input().lower())
+        number = ""
+        output = []
+        stack = []
+        for y in equation:
+            
+            if y.lower().isdigit() or y.lower() == '.' or y.lower() == [-1]:
+                number += y
+                continue
+            else:
+                if number:
+                    equation_list.append(number)
+                    number = ""
+                if y.strip():
+                    equation_list.append(y)
+                
+        if number:
+              equation_list.append(number)  
+        print(equation_list)
+        
+        for d in equation_list:
+            if d.isdigit():
+                output.append(d)'''
+            
+            
+        
+        
+        
         
     def view_prev_answers():
         '''

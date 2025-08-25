@@ -3,7 +3,8 @@ import sys
 
 print("Welcome to my Calculator, where you can make simple arithmetic calculations!")
 prev = 0 #initiating the variable for later use
-first_time = True     
+first_time = True  
+ans_list = []   
 while True:
     #Runs this if statement only during the first start to this loop so printing text will be different the rest of the loops.
     if first_time:
@@ -20,7 +21,32 @@ while True:
               "a number in, put 'prev'.")
         Selection = input("Calculation type: ").lower()
     first_time = False
-
+    
+    def additional_calc():
+            '''
+            
+            Gives the user the option to make another calculation or exit the
+            system.
+            
+            '''
+            while True:
+                print("\nChoose from one of the following:\n" + 
+                    "Type '1' to make another calculation.\n" +
+                    "Type '2' to show a list of the previous answers\n" +
+                    "Type '3' to make your own calculation\n" +
+                    "Type '4' to exit the calculator.")
+                rerun = input().lower()
+                if rerun.lower() == '1':
+                    print("Will do!")
+                    break
+                elif rerun.lower() == '2':
+                    view_prev_answers()
+                elif rerun.lower() == '4':
+                    print("Goodbye!")
+                    sys.exit()
+                else:
+                    print("Please choose from one of the options listed.")
+                    
     def get_numbers():
         '''
         
@@ -60,10 +86,9 @@ while True:
         Adds the two numbers the user gave and prints the output.
         
         '''
-        print("Addition it is!")
             #Adds the two numbers that the user gave together to give them the output.
         ans = input1 + input2   
-        print(f"Answer: {ans:.2f}")
+        print(f"\nAnswer: {ans:.2f}")
         return ans    
     def Subtraction():
         '''
@@ -71,10 +96,9 @@ while True:
         Subtracts the two numbers the user gave and prints the output.
         
         '''
-        print("Subtraction it is!")
         #Subtracts the two numbers given by the user to give an output.
         ans = input1 - input2
-        print(f"Answer: {ans:.2f}")
+        print(f"\nAnswer: {ans:.2f}")
         return ans
         
     def Multiplication():
@@ -83,10 +107,9 @@ while True:
         Multiplies the two numbers the user gave and prints the output.
         
         '''
-        print("Multiplication it is!")
         #Multiplies the two numbers together that were given by the user,
         ans = input1 * input2
-        print(f"Answer: {ans:.2f}")
+        print(f"\nAnswer: {ans:.2f}")
         return ans
         
     def Division():
@@ -95,31 +118,33 @@ while True:
         Divides the two numbers the user gave and prints the output.
         
         '''
-        print("Division it is!")
         try: 
             ans = input1 / input2
-            print(f"Answer: {ans:.2f}")
+            print(f"\nAnswer: {ans:.2f}")
             return ans
         except:
             print("Cannot divide by zero!")
             sys.exit()
-            
-    def additional_calc():
+        
+    def view_prev_answers():
         '''
         
-        Gives the user the option to make another calculation or exit the
-        system.
+        This function returns a list of all the previous answers that were calculated.
         
         '''
-        print("\nWould you like to make another calculation, Y or N?")
-        rerun = input().lower()
-        if rerun.lower() == 'y':
-            print("Will do!")
-        elif rerun.lower() == 'n':
-            sys.exit()
-        else:
-            print("Please choose either Y or N to make another calculation.")
-            additional_calc()
+        while True:
+            print("These are your previous calculations made on the calculator: ")
+            for number, i in enumerate(ans_list, start = 1):
+                print(number, i)
+            print("When you are done, type '1' to go back to the menu.")
+            goback = input()
+            if goback == '1':
+                additional_calc()
+                break
+            else:
+                print("Please press '1' when you are finished looking at the previous answers.")
+        
+        
         
 
     #This goes through the users selection and sees what arithmetic they want to use.    
@@ -133,6 +158,8 @@ while True:
         prev = Division()
     else:
         print ("Please choose from the options listed.")
+    prev = round(prev, 2)
+    ans_list.append(prev)
     additional_calc()
     
 

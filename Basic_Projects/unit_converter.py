@@ -4,6 +4,58 @@ print("Welcome to my unit converter! \n" +
 
 while True:
     
+    def weight():
+        while True:
+            print("Choose the number that corresponds to what weight you want to convert from:\n" +
+                    "1. Grams\n" +
+                    "2. Kilograms\n" +
+                    "3. Ounces\n"
+                    "4. Pounds\n" +
+                    "5. Stones")
+             #Makes a list of the valid options the user can choose from to check against the user input.
+            valid_options = {"1": "Grams", 
+                             "2": "Kilograms",
+                             "3": "Ounces",
+                             "4": "Pounds",
+                             "5": "Stones"}
+            input1 = input().strip().lower()
+            if input1 in valid_options:
+                amount()
+                return input1
+                    
+            else:
+                print("Please choose from the options listed")
+                continue
+    
+                    
+                
+    def amount():
+        '''
+        Gets the user to input the starting amount for the converter to use. 
+        This function is only used for length and weight.
+        
+        '''
+        while True:
+            print("What is the initial amount?")
+            heaviness = input().strip()
+            try:
+                heaviness = float(heaviness)
+            except:
+                print("Please print a valid number.")
+                continue
+            if heaviness < 0:
+                print("This number mustn't be negative.")
+                continue
+            convert_to_weight()
+            break
+            
+            
+    def convert_to_weight():
+        '''
+        This will find what the user wants to convert the weight to.
+        
+        '''
+    
     
     def type_of_unit():
         '''
@@ -22,7 +74,7 @@ while True:
                 #dosomething
                 break
             elif type == '2':
-                #dosomething
+                weight()
                 break
             elif type == '3':
                 #dosomething
@@ -30,12 +82,22 @@ while True:
             else:
                 print("Please choose from the options given.")
                 
-        
-        
-        
-        
-        
-        
-        
     type_of_unit()
+    converter = weight()           
+    def Length():
+        print("Length")
+        
+    
+        
+            
+            
+                
+            
+                        
+                            
+                    
+        
+    
+         
+    
           

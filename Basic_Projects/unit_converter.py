@@ -3,8 +3,71 @@ print("Welcome to my unit converter! \n" +
 
 
 
-    
-def convert_to_weight(converter, heavy):
+def convert_to_length(converter1, length):
+    '''
+    This will find what the user wants to convert the length to.        
+    '''
+    while True:
+        print("Choose the number that corresponds to what length you want to convert to:\n" +
+                "1. Meters\n" +
+                "2. Kilometers\n" +
+                "3. Centimeters\n" +
+                "4. Feet" +
+                "5. Miles\n" +
+                "6. Yards\n" +
+                "7. Inches")
+        valid_options = {"1": "Meters", 
+                        "2": "Kilometers",
+                        "3": "Centimeters",
+                        "4": "Feet",
+                        "5": "Miles",
+                        "6": "Yards",
+                        "7": "Inches"}
+        input2 = input().strip().lower()
+        if converter1 == input2:
+            print("You can't convert to the same unit.")
+            continue
+        elif input2 in valid_options:
+            print(f"You are converting {length} {valid_options[converter1]} to {valid_options[input2]}.")
+            conversion_factors = {
+                "Meters": {
+                    "Kilometers": 1/1000,
+                    "Centimeters": 100,
+                    "Feet": 3.28084,
+                    "Miles": 1/1609.34,
+                    "Yards": 1.09361,
+                    "Inches": 39.3701
+                },
+                "Kilometers": {
+                    "Meters": 1000,
+                    "Centimeters": 100000,
+                    "Feet": 3280.84,
+                    "Miles": 0.621371,
+                    "Yards": 1093.61,
+                    "Inches": 39370.1
+                },
+                "Centimeters": {
+                    "Meters": 1/100,
+                    "Kilometers": 1/100000,
+                    "Feet": 0.0328084,
+                    "Miles": 1/160934,
+                    "Yards": 0.0109361,
+                    "Inches": 0.393701
+                },
+                "Feet": {
+                    "Meters": 0.3048,
+                    "Kilometers": 0.0003048,
+                    "Centimeters": 30.48,
+                    "Miles": 1/5280,
+                    "Yards": 1/3,
+                    "Inches": 12}
+            }
+            converted1 = length * conversion_factors[valid_options[converter1]][valid_options[input2]]
+            converted1 = round(converted1, 2)
+            print(f"The converted length is {converted1} {valid_options[input2]}.")
+            break
+          
+def convert_to_weight(converter2, heavy):
     '''
     This will find what the user wants to convert the weight to.        
     '''
@@ -21,11 +84,11 @@ def convert_to_weight(converter, heavy):
                         "4": "Pounds",
                         "5": "Stones"}
         input2 = input().strip().lower()
-        if converter == input2:
+        if converter2 == input2:
             print("You can't convert to the same unit.")
             continue
         elif input2 in valid_options:
-            print(f"You are converting {heavy} {valid_options[converter]} to {valid_options[input2]}.")
+            print(f"You are converting {heavy} {valid_options[converter2]} to {valid_options[input2]}.")
             conversion_factors = {
                 "Grams": {
                     "Kilograms": 1/1000,
@@ -58,12 +121,31 @@ def convert_to_weight(converter, heavy):
                     "Pounds": 14
                 }
             }
-            converted = heavy * conversion_factors[valid_options[converter]][valid_options[input2]]
-            converted = round(converted, 2)
-            print(f"The converted weight is {converted} {valid_options[input2]}.")
+            converted2 = heavy * conversion_factors[valid_options[converter2]][valid_options[input2]]
+            converted2 = round(converted2, 2)
+            print(f"The converted weight is {converted2} {valid_options[input2]}.")
             break  
-            
-def amount(converter):
+def length_amount(converter1):
+    '''
+    Gets the user to input the starting amount for the converter to use. 
+    This function is only used for length and weight.
+     
+    '''
+    while True:
+        print("What is the initial Length?")
+        lengthiness = input().strip()
+        try:
+            lengthiness = float(lengthiness)
+        except:
+            print("Please print a valid number.")
+            continue
+        if lengthiness < 0:
+            print("This number mustn't be negative.")
+            continue
+        convert_to_length(converter1, lengthiness)
+        return lengthiness
+    
+def amount(converter2):
     '''
     Gets the user to input the starting amount for the converter to use. 
     This function is only used for length and weight.
@@ -80,7 +162,7 @@ def amount(converter):
         if heaviness < 0:
             print("This number mustn't be negative.")
             continue
-        convert_to_weight(converter, heaviness)
+        convert_to_weight(converter2, heaviness)
         return heaviness
     
 def weight():
@@ -111,6 +193,32 @@ def weight():
             print("Please choose from the options listed")
             continue
         
+def Length():
+    while True:
+        
+        print("Choose the number that corresponds to what length you want to convert from:\n" +
+                "1. Meters\n" +
+                "2. Kilometers\n" +
+                "3. Centimeters\n" +
+                "4. Feet\n" +
+                "5. Miles\n" +
+                "6. Yards\n" +
+                "7. Inches")
+        input1 = input().strip().lower()
+         #Makes a list of the valid options the user can choose from to check against the user  
+        valid_options = {"1": "Meters", 
+                        "2": "Kilometers",
+                        "3": "Centimeters",
+                        "4": "Feet",
+                        "5": "Miles",
+                        "6": "Yards",
+                        "7": "Inches"}
+        if input1 in valid_options:
+            Lengthiness = length_amount(input1)
+            return input1, Lengthiness
+        else:
+            print("Please choose from the options listed")
+            continue
 def type_of_unit():
     '''
     This function will find out which unit type the user wants to convert
@@ -123,10 +231,10 @@ def type_of_unit():
               "3. Temperature")
         type = input().strip()
         if type == '1':
-            #dosomething
+            converter1, lengthiness = Length()
             break
         elif type == '2':
-            converter, heavy = weight()
+            converter2, heavy = weight()
             break
         elif type == '3':
             #dosomething

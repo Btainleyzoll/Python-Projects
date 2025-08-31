@@ -64,7 +64,7 @@ def convert_to_length(converter1, length):
             }
             converted1 = length * conversion_factors[valid_options[converter1]][valid_options[input2]]
             converted1 = round(converted1, 2)
-            print(f"The converted length is {converted1} {valid_options[input2]}.")
+            print(f"The converted length is {converted1} {valid_options[input2]}\n.")
             break
           
 def convert_to_weight(converter2, heavy):
@@ -123,8 +123,45 @@ def convert_to_weight(converter2, heavy):
             }
             converted2 = heavy * conversion_factors[valid_options[converter2]][valid_options[input2]]
             converted2 = round(converted2, 2)
-            print(f"The converted weight is {converted2} {valid_options[input2]}.")
-            break  
+            print(f"The converted weight is {converted2} {valid_options[input2]}\n.")
+            break 
+
+def convert_to_temp(converter3, temp):
+    '''
+    This will find what the user wants to convert the temperature to.        
+    '''
+    while True:
+        print("Choose the number that corresponds to what temperature you want to convert to:\n" +
+                "1. Celsius\n" +
+                "2. Fahrenheit\n" +
+                "3. Kelvin")
+        valid_options = {"1": "Celsius", 
+                        "2": "Fahrenheit",
+                        "3": "Kelvin"}
+        input3 = input().strip().lower()
+        if converter3 == input3:
+            print("You can't convert to the same unit.")
+            continue
+        elif input3 in valid_options:
+            print(f"You are converting {temp} {valid_options[converter3]} to {valid_options[input3]}.")
+            if converter3 == '1':  #Celsius
+                if input3 == '2':  #Fahrenheit
+                    converted3 = (temp * 9/5) + 32
+                elif input3 == '3':  #Kelvin
+                    converted3 = temp + 273.15
+            elif converter3 == '2':  #Fahrenheit
+                if input3 == '1':  #Celsius
+                    converted3 = (temp - 32) * 5/9
+                elif input3 == '3':  #Kelvin
+                    converted3 = (temp + 459.67) * 5/9
+            elif converter3 == '3':  #Kelvin
+                if input3 == '1':  #Celsius
+                    converted3 = temp - 273.15
+                elif input3 == '2':  #Fahrenheit
+                    converted3 = (temp * 9/5) - 459.67
+            converted3 = round(converted3, 2)
+            print(f"The converted temperature is {converted3} {valid_options[input3]}.\n")
+            break 
 def length_amount(converter1):
     '''
     Gets the user to input the starting amount for the converter to use. 
@@ -145,7 +182,7 @@ def length_amount(converter1):
         convert_to_length(converter1, lengthiness)
         return lengthiness
     
-def amount(converter2):
+def weight_amount(converter2):
     '''
     Gets the user to input the starting amount for the converter to use. 
     This function is only used for length and weight.
@@ -164,6 +201,35 @@ def amount(converter2):
             continue
         convert_to_weight(converter2, heaviness)
         return heaviness
+    
+def temp_amount(converter3):
+    '''
+    Gets the user to input the starting amount for the converter to use. 
+    This function is only used for temperature.
+     
+    '''
+    while True:
+        print("What is the initial Temperature?")
+        temp = input().strip()
+        try:
+            temp = float(temp)
+        except:
+            print("Please print a valid number.")
+            continue
+        if converter3 == '1':  #Celsius
+            if temp < -273.15:
+                print("This temperature is below absolute zero.")
+                continue
+        elif converter3 == '2':  #Fahrenheit
+            if temp < -459.67:
+                print("This temperature is below absolute zero.")
+                continue
+        elif converter3 == '3':  #Kelvin
+            if temp < 0:
+                print("This temperature is below absolute zero.")
+                continue
+        convert_to_temp(converter3, temp)
+        return temp
     
 def weight():
     '''
@@ -186,7 +252,7 @@ def weight():
                          "5": "Stones"}
         input1 = input().strip().lower()
         if input1 in valid_options:
-            heaviness = amount(input1)
+            heaviness = weight_amount(input1)
             return input1, heaviness
                 
         else:
@@ -219,6 +285,27 @@ def Length():
         else:
             print("Please choose from the options listed")
             continue
+        
+def temperature():
+    '''
+    This function will convert between different temperature units.
+    '''
+    while True:
+        print("Choose the number that corresponds to what temperature you want to convert from:\n" +
+                "1. Celsius\n" +
+                "2. Fahrenheit\n" +
+                "3. Kelvin")
+        valid_options = {"1": "Celsius", 
+                        "2": "Fahrenheit",
+                        "3": "Kelvin"}
+        input3 = input().strip().lower()
+        if input3 in valid_options:
+            temp = temp_amount(input3)
+            return input3, temp
+        else:
+            print("Please choose from the options listed")
+            continue
+        
 def type_of_unit():
     '''
     This function will find out which unit type the user wants to convert
@@ -237,7 +324,7 @@ def type_of_unit():
             converter2, heavy = weight()
             break
         elif type == '3':
-            #dosomething
+            converter3, temp = temperature()
             break
         else:
             print("Please choose from the options given.")

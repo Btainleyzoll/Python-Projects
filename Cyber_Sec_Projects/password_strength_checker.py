@@ -88,9 +88,6 @@ def another_test():
             print("Please choose either Y or N: \n")
             continue
     
-    
-
-
 
 while True:
     pswd = get_password()

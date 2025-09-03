@@ -1,8 +1,7 @@
-xd = ['a', 'b', 'b', 'c', 'd']
-xp = set(xd)
-sorted_xp = sorted(xp)
-print (xd, sorted_xp)
-if xd == sorted_xp:
-    print("trure")
-else:
-    print("nof")
+string = "23-0a"
+
+string = string.strip().split("-")
+print(string)
+string = list(map(int, string))
+print(string)
+            

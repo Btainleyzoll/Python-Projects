@@ -1,7 +1,3 @@
-string = "23-0a"
-
-string = string.strip().split("-")
-print(string)
-string = list(map(int, string))
-print(string)
-            
+common = [21, 22, 23, 25, 53, 80, 110, 143, 443, 3389]
+for char in common:
+    print()

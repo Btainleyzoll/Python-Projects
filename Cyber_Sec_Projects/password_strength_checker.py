@@ -1,3 +1,9 @@
+'''
+This is my password Strength checker where you can input a password,
+and the functions will run various checks to see how secure this 
+password actually is and will output a prompt letting the user know
+if there password is strong or should be augmented.
+'''
 import re
 import sys
 from collections import Counter

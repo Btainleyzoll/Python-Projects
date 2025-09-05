@@ -1,7 +1,7 @@
 '''
-This is my port scanner where ports will try to be connected to see if the port is
-open or closed. The user is able to choose a hostname and which ports to check.
-The output will display the ports and if they are open or closed.
+This is my port scanner where you enter the hostname or IP address, then 
+you can choose which ports you want to to try to connect to, including every port and common ports. Then the system
+will scan every port that was selected and output which ports are open.
 
 
 
@@ -9,6 +9,7 @@ The output will display the ports and if they are open or closed.
 import socket
 import concurrent.futures
 import threading
+from tqdm import tqdm
 print("Welcome to my port scanner. ")
 lock = threading.Lock()
 def user_specifics():
@@ -23,7 +24,12 @@ def user_specifics():
         except socket.gaierror: #makes sure the hostname is valid
             print("Please enter a valid hostname or IP")
             continue
-        
+        try:
+            if int(port) < 0 or int(port) > 65535:
+                print("Please enter a valid port. ")
+                continue
+        except ValueError:
+            pass
         if port.strip().lower() == "all":
             print("Will try to connect to every port 0-65535. ")
             return ip, port
@@ -64,7 +70,8 @@ def big_scan(ip, portnum):
     sock.settimeout(.5)
     try:
         sock.connect((ip, portnum))
-        open_ports.append(portnum)
+        with lock:
+            open_ports.append(portnum)
     except socket.timeout:
         pass
     except ConnectionRefusedError:
@@ -75,38 +82,46 @@ def big_scan(ip, portnum):
          
 
 def connect_port(ip, port):
+    big_scan_threshold = 1000
     common = [21, 22, 23, 25, 53, 80, 110, 143, 443, 3389, 8080]
     if port == "all":
+        port_range = range(0,65535)
         print("Trying to connect to all ports")
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers = 50)
-        for portnum in range(0, 1500):
-            executor.submit(big_scan, ip, portnum)
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers = 1000)
+        futures = [executor.submit(big_scan, ip, portnum) for portnum in port_range]
+        for _ in tqdm(concurrent.futures.as_completed(futures), total = len(futures)):
+            pass
         executor.shutdown(wait = True)
-        print("Summary: \n" +
-              f"List of open ports {open_ports}\n" +
-              "All other ports closed or connection timed out.\n")
+        print("Open ports:", ", ".join(map(str, open_ports)))
         open_ports.clear()
+        
     elif port == "common":
         print("Trying to connect to common ports ")
         executor = concurrent.futures.ThreadPoolExecutor(max_workers = 50)
         for portnum in common:
             executor.submit(single_scan_port, ip, portnum)
         executor.shutdown(wait = True)  
+        
     else:
-        executor = concurrent.futures.ThreadPoolExecutor(max_workers = 50)
+        executor = concurrent.futures.ThreadPoolExecutor(max_workers = 100)
         
         if len(port) == 1:
             executor.submit(single_scan_port, ip, port[0])
+            
         else:
-            for portnum in range(port[0], port[-1]):
-                if range(port[0], port[-1]) > 1000:
-                    executor.submit(big_scan, ip, portnum)
-                    print("Summary: \n" +
-                    f"List of open ports {open_ports}\n" +
-                    "All other ports closed or connection timed out.\n")
-                    open_ports.clear()
-                else:
-                    executor.submit(single_scan_port, ip, portnum)
+            port_range = range(port[0], port[-1]+1)
+            if len(port_range) > big_scan_threshold: #decides if we do normal or big scan
+                futures = [executor.submit(big_scan, ip, portnum) for portnum in port_range]
+                for _ in tqdm(concurrent.futures.as_completed(futures), total = len(futures)):
+                    pass
+                
+                print("Open ports:", ", ".join(map(str, open_ports)))
+                open_ports.clear()   
+            else:
+                futures = [executor.submit(single_scan_port, ip, portnum) for portnum in port_range]
+                for _ in tqdm(concurrent.futures.as_completed(futures), total = len(futures)):
+                    pass
+                
         executor.shutdown(wait = True)
             
     

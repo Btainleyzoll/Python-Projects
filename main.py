@@ -1,27 +1,8 @@
-import socket
+cve = "cpe:2.3:a:phoenixcontact-software:multiprog:5.0:*:*:*:*:*:*:*"
 
- 
-
-msg         = "Datagram from client";
-
-ipAndPort   = ("127.0.0.1", 8080);
-
-udpClient   = socket.socket(socket.AF_INET, socket.SOCK_DGRAM);
-
- 
-
-# Send a datagram to the UDP server
-
-udpClient.sendto(msg.encode(), ipAndPort);
-
- 
-
-# Receive a reply from UDP server
-
-datagramFromServer  = udpClient.recv(1024);
-
- 
-
-# Print the received datagram from server
-
-print(datagramFromServer.decode());
+cve = cve.split(":") 
+part = cve[2]
+vendor = cve[3]
+product = cve[4]
+version = cve[5]
+print(part, vendor, product, version)

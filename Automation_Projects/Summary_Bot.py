@@ -8,10 +8,12 @@ import time
 import schedule
 import pandas as pd
 import smtplib
+from email.mime.text import MIMEText
 #News provided by NewsAPI
 #Weather data provided by OpenWeather
 load_dotenv()
 def get_news(mode):
+    summary = ""
     if mode == "morning":
         categories = ["general", "health", "business"]
         newsapi1 = NewsApiClient(api_key = os.getenv("NEWS_API_KEY"))
@@ -22,11 +24,12 @@ def get_news(mode):
                                             language='en',
                                             country='us',
                                             page_size=3)
-            print(f"\n Top 3 {cat.capitalize()} articles from overnight: ")
+            summary += f"\n Top 3 {cat.capitalize()} articles from overnight:\n "
             for article in top_headlines["articles"]:
-                print(f"- {article['title']}: ({article['url']})")
+                summary+=f"- {article['title']}: ({article['url']})\n"
+            summary+="\n\n"
                 
-    if mode == "evening":
+    elif mode == "evening":
         categories = ["general", "technology", "sports", "science", "business"]
         newsapi2 = NewsApiClient(api_key = os.getenv("NEWS_API_KEY"))
         
@@ -36,14 +39,20 @@ def get_news(mode):
                                             language='en',
                                             country='us',
                                             page_size=3)
-            print(f"\n Top {cat.capitalize()} articles from today: ")
+            summary+=f"\n Top {cat.capitalize()} articles from today: \n"
             for article in top_headlines["articles"]:
-                print(f"- {article['title']}: ({article['url']})")
+                summary+=f"- {article['title']}: ({article['url']})\n"
+                summary+="\n\n"
+    
+    return summary
+                
+
     
     
     
     
 def get_weather(mode = "morning", city = "london"):
+    summary = ""
     mins = []
     maxs = []
     rain_chance = 0
@@ -74,12 +83,12 @@ def get_weather(mode = "morning", city = "london"):
             else:
                 min_temp = "NA"
                 max_temp = "NA"
-            print(f"Weather in {city}: {description}, {temp:.00f} Celsius")
-            print(f"The low for today is {min_temp:.00f} Celsius and the high is {max_temp:.00f} Celsius.")
-            print(f"The chance of rain today is {rain_chance}%")
+            summary+=f"Weather in {city}: {description}, {temp:.00f} Celsius\n"
+            summary+=f"The low for today is {min_temp:.00f} Celsius and the high is {max_temp:.00f} Celsius.\n"
+            summary+=f"The chance of rain today is {rain_chance}%\n\n"
         else: 
-            print("Error:", info)
-    if mode == "evening":
+            summary+="Error:\n\n", info
+    elif mode == "evening":
         if response.status_code == 200 and response_forecast.status_code == 200:
             temp = info["main"]["temp"]
             
@@ -95,28 +104,29 @@ def get_weather(mode = "morning", city = "london"):
             else:
                 min_temp = "NA"
                 max_temp = "NA"
-            print(f"The current weather in {city} is {temp} Celsius.")
-            print(f"The low for tomorrow is expected to be {min_temp:.00f} Celsius and the high to be {max_temp:.00f} Celsius.")
-            print(f"The chance of rain tomorrow shows {rain_chance}%")
+            summary+=f"The current weather in {city} is {temp} Celsius.\n"
+            summary+=f"The low for tomorrow is expected to be {min_temp:.00f} Celsius and the high to be {max_temp:.00f} Celsius.\n"
+            summary+=f"The chance of rain tomorrow shows {rain_chance}%\n\n"
         else: 
-            print("Error:", info)
-        
+            summary+="Error:\n\n", info
+    return summary    
         
 
 def get_stocks(mode):
     tickers = ["AAPL", "NVDA", "TSLA", "MSFT", "AMZN", "META" ]
-    
+    summary = ""
     if mode == "morning":
         data1 = yf.download(tickers, period = "2d", interval = "1d", auto_adjust=True)["Close"]
         latest_data1 = data1.tail(1)
         
-        print("Latest closing stock prices:")
+        summary+="Latest closing stock prices:\n"
         for ticker in tickers:
             price = latest_data1[ticker].values[0]
-            print(f"{ticker}: ${price:.2f}")
+            summary+=f"{ticker}: ${price:.2f}\n"
+        summary+="\n\n"
             
             
-    if mode == "evening":
+    elif mode == "evening":
         data2 = yf.download(tickers, period="1d", interval="1d", auto_adjust=True)["Close"]
         latest_data2 = data2.tail(1)
         try:
@@ -126,33 +136,63 @@ def get_stocks(mode):
             biggest_winner = percent_change.sort_values(ascending=False).head(3)
             biggest_loser = percent_change.sort_values(ascending=True).head(3)
             
-            print("Top 3 Gainers in the stock market today:")
+            summary+="Top 3 Gainers in the stock market today:\n"
             for ticker, change in biggest_winner.items():
                 price = data2.iloc[-1][ticker]
-                print(f"{ticker}: {percent_change:.2f}% (Closing price: {price:.2f})")
+                summary+=f"{ticker}: {percent_change:.2f}% (Closing price: {price:.2f})\n"
+            summary+="\n\n"
                 
-            print("Top 3 Losers in the stock market today:")
+            summary+="Top 3 Losers in the stock market today:\n"
             for ticker, change in biggest_loser.items():
                 price = data2.iloc[-1][ticker]
-                print(f"{ticker}: {percent_change:.2f}% (Closing price: {price:.2f})")
+                summary+=f"{ticker}: {percent_change:.2f}% (Closing price: {price:.2f})\n"
+            summary+="\n\n"
         except IndexError:
-            print("Not enough data for calculation")
+            summary+="Not enough data for calculation\n\n"
             
-        print("Latest Closing stock prices:")
+        summary+="Latest Closing stock prices:\n"
         for ticker in tickers:
             price = latest_data2[ticker].values[0]
-            print(f"{ticker}: ${price:.2f}")
+            summary+=f"{ticker}: ${price:.2f}\n"
+        summary+="\n\n"
             
-       
+    return summary
+            
+def send_email(summary):
+    msg = MIMEText(summary)
+    msg["Subject"] = "Daily Summary Bot"
+    msg["From"] = "bainleyzoll@gmail.com"       
+    msg["To"] = "bfishman02@gmail.com"
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(os.getenv("EMAIL"),os.getenv("EMAIL_PASS"))
+        server.send_message(msg)
+        print("Done")
+    
+    
+def run_morning(): 
+    town = "hatfield"
+    summary = ""
+    summary+=get_weather(mode = "morning", city=town)
+    summary+="\n\n"
+    summary+=get_news(mode = "morning")
+    summary+="\n\n"
+    summary+=get_stocks(mode = "morning")
+    send_email(summary)
+    
+def run_evening():
+    town = "hatfield"
+    summary = ""
+    summary+=get_weather(mode = "evening", city=town)
+    summary+="\n\n"
+    summary+=get_news(mode = "evening")
+    summary+="\n\n"
+    summary+=get_stocks(mode = "evening")
+    send_email(summary)
+    
+schedule.every().day.at("11:00"). do(run_morning)
+schedule.every().day.at("01:12").do(run_evening)
 
-def run_morning():
-    print("Good Morning,\nRunning morning bot")       
-
-mode = "evening"
-town = input("What city do you want the weather for? ")   
-get_weather(mode, town)
-print("\n\n")
-get_news(mode)
-print("\n\n")
-get_stocks(mode)
+while True:
+    schedule.run_pending()
+    time.sleep(60)
     

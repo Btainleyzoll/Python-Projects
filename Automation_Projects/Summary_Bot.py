@@ -190,7 +190,7 @@ def run_evening():
     send_email(summary)
     
 schedule.every().day.at("11:00"). do(run_morning)
-schedule.every().day.at("01:12").do(run_evening)
+schedule.every().day.at("21:00").do(run_evening)
 
 while True:
     schedule.run_pending()

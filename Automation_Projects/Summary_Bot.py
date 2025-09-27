@@ -45,11 +45,6 @@ def get_news(mode):
                 summary+="\n\n"
     
     return summary
-                
-
-    
-    
-    
     
 def get_weather(mode = "morning", city = "london"):
     summary = ""
@@ -162,7 +157,7 @@ def send_email(summary):
     msg = MIMEText(summary)
     msg["Subject"] = "Daily Summary Bot"
     msg["From"] = "bainleyzoll@gmail.com"       
-    msg["To"] = "bfishman02@gmail.com"
+    msg["To"] = "bainleyz@gmail.com"
     with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
         server.login(os.getenv("EMAIL"),os.getenv("EMAIL_PASS"))
         server.send_message(msg)
@@ -189,10 +184,9 @@ def run_evening():
     summary+=get_stocks(mode = "evening")
     send_email(summary)
     
-schedule.every().day.at("11:00"). do(run_morning)
-schedule.every().day.at("21:00").do(run_evening)
-
-while True:
-    schedule.run_pending()
-    time.sleep(60)
-    
+if __name__ == "__main__":
+    hour = datetime.now().hour
+    if hour < 12:
+        run_morning()
+    else:
+        run_evening()

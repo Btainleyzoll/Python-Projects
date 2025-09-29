@@ -1,0 +1,7 @@
+python-dotenv
+newsapi-python
+requests
+yfinance
+pandas
+schedule
+secure-smtplib

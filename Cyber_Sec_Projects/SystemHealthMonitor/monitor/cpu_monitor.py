@@ -17,7 +17,12 @@ def get_per_core_usage(interval = 1, percpu = True):
     return core_usage
     
 def get_cpu_times(interval = 1, percpu = False):
-    info = psutil.cpu_times(percpu=percpu)
+    try:
         
-a = get_per_core_usage()
+        info = psutil.cpu_times(percpu=percpu)
+        print(type(info))
+        #return infocheck
+    except psutil.Error:
+        return None
+a = get_cpu_times()
 print(a)

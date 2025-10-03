@@ -61,7 +61,7 @@ def get_weather(mode = "morning", city = "london"):
     summary = ""
     mins = []
     maxs = []
-    rain_chance = 0
+    rain_chances = []
     
     today = datetime.now().date()
     tomorrow = datetime.now().date() + timedelta(days=1)
@@ -87,9 +87,14 @@ def get_weather(mode = "morning", city = "london"):
             for entry in info_forecast["list"]:
                 dates = datetime.strptime(entry["dt_txt"], "%Y-%m-%d %H:%M:%S").date()
                 if dates == today:
-                    rain_chance = entry.get("pop", 0) * 100
+                    rain_chances.append(entry.get("pop", 0) * 100)
                     mins.append(entry["main"]["temp_min"])
                     maxs.append(entry["main"]["temp_max"])
+                    
+            if rain_chances:
+                rain_chance = max(rain_chances)
+            else:
+                rain_chance = "NA"
                     
             if mins and maxs:
                 min_temp = min(mins)
@@ -114,10 +119,15 @@ def get_weather(mode = "morning", city = "london"):
             for entry in info_forecast["list"]:
                 dates = datetime.strptime(entry["dt_txt"], "%Y-%m-%d %H:%M:%S").date()
                 if dates == tomorrow:
-                    rain_chance = entry.get("pop", 0) * 100
+                    rain_chances.append(entry.get("pop", 0) * 100)
                     mins.append(entry["main"]["temp_min"])
                     maxs.append(entry["main"]["temp_max"])
-                    
+            
+            if rain_chances:
+                rain_chance = max(rain_chances)
+            else:
+                rain_chance = "NA"   
+                   
             if mins and maxs:
                 min_temp = min(mins)
                 max_temp = max(maxs)
@@ -154,7 +164,7 @@ def get_stocks(mode):
             
     elif mode == "evening":
         #Shows the daily winners/losers and the closing prices
-        data2 = yf.download(tickers, period="1d", interval="1d", auto_adjust=True)["Close"]
+        data2 = yf.download(tickers, period="2d", interval="1d", auto_adjust=True)["Close"]
         latest_data2 = data2.tail(1)
         try:
             #Gets the % change throughout the day
